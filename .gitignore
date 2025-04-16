@@ -1,0 +1,44 @@
+# Ambientes virtuais
+venv/
+.env
+*.env
+
+# Arquivos de configuração do Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Arquivos de log
+*.log
+
+# Dados e modelos
+*.joblib
+*.pkl
+*.h5
+*.model
+
+# Cache do Jupyter e IPython
+.ipynb_checkpoints/
+*.ipynb
+
+# Cache do pip
+pip-wheel-metadata/
+*.egg-info/
+dist/
+build/
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Testes
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Docker
+*.pid
+docker-compose.override.yml
