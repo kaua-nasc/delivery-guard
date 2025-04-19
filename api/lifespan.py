@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from .app.database.base import Base
 from .app.database.session import engine
+from .app.models import customer, transaction, user, transaction_item 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

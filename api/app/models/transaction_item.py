@@ -8,7 +8,7 @@ class TransactionItem(Base):
     __tablename__ = "transaction_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    transaction_id = Column(Integer, ForeignKey("transactions.id"), nullable=False)
+    transaction_id = Column(String(36), ForeignKey("transactions.id"), nullable=False)
     product_id = Column(String(50))
     product_name = Column(String(100), nullable=False)
     quantity = Column(Integer, nullable=False)

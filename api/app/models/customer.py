@@ -1,11 +1,12 @@
 from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, Text
+from sqlalchemy.orm import relationship
 
 from ..models.base import BaseModel
 
 class Customer(BaseModel):
     __tablename__ = "customers"
 
-    customer_id = Column(String(50), unique=True, nullable=False)
+    id = Column(String(36), primary_key=True, index=True)
     email = Column(String(100))
     phone = Column(String(20))
     first_name = Column(String(50))
@@ -20,3 +21,5 @@ class Customer(BaseModel):
     is_verified = Column(Boolean, default=False)
     risk_score = Column(Integer, default=0)
     last_activity = Column(TIMESTAMP(timezone=True))
+
+    transactions = relationship("Transaction", back_populates="customer")
