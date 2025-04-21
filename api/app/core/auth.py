@@ -1,11 +1,9 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+import jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
 
-from ..schemas.user import UserResponse
 from ..models.user import User
 from ..database.session import get_db
 from .security import SECRET_KEY, ALGORITHM
@@ -26,7 +24,7 @@ async def get_current_user(
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-    except JWTError:
+    except jwt.DecodeError:
         raise credentials_exception
 
     user = await db.execute(select(User).filter(User.username == username))
