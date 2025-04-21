@@ -1,3 +1,5 @@
+from api.app.messaging.producer import RabbitMQProducer
+from api.app.messaging.schemas import AnaliseMessage
 from ..service.customer_service import CustomerService
 from ..repository.transaction_repository import TransactionRepository
 from ..schemas.transaction import TransactionCreate, TransactionResponse
@@ -6,12 +8,13 @@ class TransactionService:
     def __init__(
         self,
         transaction_repo: TransactionRepository,
-        customer_service: CustomerService
+        customer_service: CustomerService,
+        producer: RabbitMQProducer
         #ml_service: ml_service,
-        #notification_service: NotificationService
     ):
         self.transaction_repo = transaction_repo
         self.customer_service = customer_service
+        self.producer = producer
         
 
     async def process_transaction(self, transaction_data: TransactionCreate) -> TransactionResponse:
@@ -31,5 +34,12 @@ class TransactionService:
             **transaction,
             "status": "pending"
         })
-        
+
+        await self.producer.publish(
+            routing_key="transaction.analise",
+            message=AnaliseMessage(
+                transaction_id=db_transaction.id
+            )
+        )
+
         return TransactionResponse.model_validate(db_transaction)
