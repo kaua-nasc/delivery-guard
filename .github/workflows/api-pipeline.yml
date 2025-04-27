@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    uses: delivery-guard/.github/workflows/shared/docker-build.yml@develop
+    uses: kaua-nasc/delivery-guard/.github/workflows/shared/docker-build.yml@develop
     with:
       project_dir: 'api'
       image_name: '${{ secrets.API_IMAGE_NAME }}'
