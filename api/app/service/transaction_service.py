@@ -1,5 +1,5 @@
-from api.app.messaging.producer import RabbitMQProducer
-from api.app.messaging.schemas import AnaliseMessage
+from ..messaging.producer import RabbitMQProducer
+from ..messaging.schemas import AnaliseMessage
 from ..service.customer_service import CustomerService
 from ..repository.transaction_repository import TransactionRepository
 from ..schemas.transaction import TransactionCreate, TransactionResponse

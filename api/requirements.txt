@@ -1,4 +1,4 @@
-fastapi==0.115.12
+fastapi[standard]
 pika==1.3.2
 pydantic==2.11.3
 pydantic_settings==2.9.1
@@ -6,3 +6,4 @@ PyJWT==2.10.1
 python-dotenv==1.1.0
 python_bcrypt==0.3.2
 SQLAlchemy==2.0.40
+asyncpg>=0.30.0

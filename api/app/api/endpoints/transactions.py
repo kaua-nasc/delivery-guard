@@ -15,3 +15,7 @@ async def create_transaction(
         return await transaction_service.process_transaction(transaction_data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+@router.get("/")
+def get():
+    return {"hello": "world"}
