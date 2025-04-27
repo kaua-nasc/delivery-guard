@@ -2,8 +2,8 @@ import aio_pika
 import asyncio
 import json
 
-from .config import RABBIT_URL
-from .processor import process_transaction
+from app.config import RABBIT_URL
+from app.consumer import process_transaction
 
 async def main():
     connection = await aio_pika.connect_robust(RABBIT_URL)

@@ -1,8 +1,8 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from processor.database import get_db
-from processor.schema import Transaction
+from .database import get_db
+from .schema import Transaction
 
 
 async def process_transaction(message: dict):

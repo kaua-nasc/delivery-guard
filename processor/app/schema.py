@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.sql import func
 
-from processor.database import Base
+from .database import Base
 
 class BaseModel(Base):
     __abstract__ = True

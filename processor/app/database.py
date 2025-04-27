@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-import processor.config as config
+from .config import DATABASE_URL
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
@@ -8,7 +8,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 engine = create_async_engine(
-    config.DATABASE_URL,
+    DATABASE_URL,
     echo=True,
     pool_size=5,
     max_overflow=10,
