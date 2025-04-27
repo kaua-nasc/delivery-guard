@@ -1,0 +1,31 @@
+name: API CI/CD Pipeline
+
+on:
+  push:
+    paths:
+      - 'api/*'
+      - '.github/workflows/api-pipeline.yml'
+
+jobs:
+  build:
+    uses: ./.github/workflows/shared/docker-build.yml
+    with:
+      project_dir: 'api'
+      image_name: '${{ secrets.API_IMAGE_NAME }}'
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/shared/deploy-vm.yml
+    with:
+      image_name: '${{ secrets.API_IMAGE_NAME }}'
+      container_name: '${{ secrets.API_CONTAINER_NAME }}'
+      ports: '${{ secrets.API_PORT }}'
+      env_vars: '${{ secrets.ENV_VARS }}'
+    secrets:
+      VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
+      VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+      VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+      VM_SSH_KNOWN_HOSTS: ${{ secrets.VM_SSH_KNOWN_HOSTS }}
