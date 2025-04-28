@@ -47,10 +47,10 @@ jobs:
       - name: Deploy to VM
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_SSH_HOST }} "
-            docker pull docker.io/${{ secrets.API_IMAGE_NAME }}:latest &&
-            docker stop ${{ secrets.API_CONTAINER_NAME }} || true &&
-            docker rm ${{ secrets.API_CONTAINER_NAME }} || true &&
-            docker run -d \
+            sudo docker pull docker.io/${{ secrets.API_IMAGE_NAME }}:latest &&
+            sudo docker stop ${{ secrets.API_CONTAINER_NAME }} || true &&
+            sudo docker rm ${{ secrets.API_CONTAINER_NAME }} || true &&
+            sudo docker run -d \
               --name ${{ secrets.API_CONTAINER_NAME }} \
               -p ${{ secrets.API_PORT }} \
               ${{ steps.env_vars.outputs.env_flags }} \
