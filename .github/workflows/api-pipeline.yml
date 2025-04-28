@@ -5,26 +5,29 @@ on:
     paths:
       - 'api/*'
       - '.github/workflows/api-pipeline.yml'
+  pull_request:
+    paths:
+      - 'api/*'
+      - '.github/workflows/api-pipeline.yml'
 
 jobs:
   build:
-    uses: kaua-nasc/delivery-guard/.github/workflows/docker-build.yml@develop
+    uses: ./.github/workflows/docker-build.yml
     with:
       project_dir: api
-      image_name: ${{ secrets.API_IMAGE_NAME }}
     secrets:
+      API_IMAGE_NAME: ${{ secrets.API_IMAGE_NAME }}
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   deploy:
     needs: build
-    uses: kaua-nasc/delivery-guard/.github/workflows/deploy-vm.yml@develop
-    with:
-      image_name: ${{ secrets.API_IMAGE_NAME }}
-      container_name: ${{ secrets.API_CONTAINER_NAME }}
-      ports: ${{ secrets.API_PORT }}
-      env_vars: ${{ secrets.ENV_VARS }}
+    uses: ./.github/workflows/deploy-vm.yml
     secrets:
+      API_IMAGE_NAME: ${{ secrets.API_IMAGE_NAME }}
+      API_CONTAINER_NAME: ${{ secrets.API_CONTAINER_NAME }}
+      API_PORT: ${{ secrets.API_PORT }}
+      ENV_VARS: ${{ secrets.ENV_VARS }}
       VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
       VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
       VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}

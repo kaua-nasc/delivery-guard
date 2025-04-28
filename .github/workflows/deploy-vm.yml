@@ -2,26 +2,15 @@ name: Docker Deploy
 
 on:
   workflow_call:
-    inputs:
-      image_name:
-        description: 'Name of Docker image to deploy'
-        required: true
-        type: string
-      container_name:
-        description: 'Name for the container in the VM'
-        required: true
-        type: string
-      ports:
-        description: 'Port mapping (host:container)'
-        required: false
-        type: string
-        default: '80:80'
-      env_vars:
-        description: 'Environment variables (KEY=VALUE, separated by commas)'
-        required: false
-        type: string
-        default: ''
     secrets:
+      API_CONTAINER_NAME:
+        required: true
+      API_PORT:
+        required: true
+      API_IMAGE_NAME:
+        required: true
+      ENV_VARS:
+        required: false
       VM_SSH_HOST:
         required: true
       VM_SSH_USER:
@@ -44,10 +33,10 @@ jobs:
       - name: Prepare environment variables
         id: env_vars
         run: |
-          if [ -z "${{ inputs.env_vars }}" ]; then
+          if [ -z "${{ secrets.ENV_VARS }}" ]; then
             echo "env_flags=" >> $GITHUB_OUTPUT
           else
-            IFS=',' read -ra VARS <<< "${{ inputs.env_vars }}"
+            IFS=',' read -ra VARS <<< "${{ secrets.ENV_VARS }}"
             FLAGS=""
             for var in "${VARS[@]}"; do
               FLAGS+=" -e \"$var\""
@@ -58,12 +47,12 @@ jobs:
       - name: Deploy to VM
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_SSH_HOST }} "
-            docker pull docker.io/${{ inputs.image_name }}:latest &&
-            docker stop ${{ inputs.container_name }} || true &&
-            docker rm ${{ inputs.container_name }} || true &&
+            docker pull docker.io/${{ secrets.API_IMAGE_NAME }}:latest &&
+            docker stop ${{ secrets.API_CONTAINER_NAME }} || true &&
+            docker rm ${{ secrets.API_CONTAINER_NAME }} || true &&
             docker run -d \
-              --name ${{ inputs.container_name }} \
-              -p ${{ inputs.ports }} \
+              --name ${{ secrets.API_CONTAINER_NAME }} \
+              -p ${{ secrets.API_PORT }} \
               ${{ steps.env_vars.outputs.env_flags }} \
-              docker.io/${{ inputs.image_name }}:latest
+              docker.io/${{ secrets.API_IMAGE_NAME }}:latest
           "

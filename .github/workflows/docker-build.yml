@@ -7,16 +7,14 @@ on:
         description: 'Directory containing the Dockerfile'
         required: true
         type: string
-      image_name:
-        description: 'Name for the Docker image'
-        required: true
-        type: string
       dockerfile_name:
         description: 'Dockerfile name'
         required: false
         type: string
         default: 'Dockerfile'
     secrets:
+      API_IMAGE_NAME:
+        required: true
       DOCKER_HUB_USERNAME:
         required: true
       DOCKER_HUB_TOKEN:
@@ -39,7 +37,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: docker.io/${{ inputs.image_name }}
+          images: docker.io/${{ secrets.API_IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
