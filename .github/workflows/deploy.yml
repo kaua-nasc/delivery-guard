@@ -18,7 +18,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest ./api
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest
         
       - name: Deploy via SSH
