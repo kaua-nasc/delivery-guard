@@ -1,13 +1,13 @@
-name: Docker Deploy
+name: Deploy to VM
 
 on:
   workflow_call:
     secrets:
+      API_IMAGE_NAME:
+        required: true
       API_CONTAINER_NAME:
         required: true
       API_PORT:
-        required: true
-      API_IMAGE_NAME:
         required: true
       ENV_VARS:
         required: false
@@ -17,42 +17,40 @@ on:
         required: true
       VM_SSH_PRIVATE_KEY:
         required: true
-      VM_SSH_KNOWN_HOSTS:
-        required: true
+      DOCKER_USERNAME:
+        required: false
+      DOCKER_PASSWORD:
+        required: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2.7.0
+      - name: Debug Secrets
+        run: |
+          echo "Host: ${{ secrets.VM_SSH_HOST }}"
+          echo "User: ${{ secrets.VM_SSH_USER }}"
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1
         with:
+          host: ${{ secrets.VM_SSH_HOST }}
+          username: ${{ secrets.VM_SSH_USER }}
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.VM_SSH_KNOWN_HOSTS }}
-
-      - name: Prepare environment variables
-        id: env_vars
-        run: |
-          if [ -z "${{ secrets.ENV_VARS }}" ]; then
-            echo "env_flags=" >> $GITHUB_OUTPUT
-          else
-            IFS=',' read -ra VARS <<< "${{ secrets.ENV_VARS }}"
-            FLAGS=""
-            for var in "${VARS[@]}"; do
-              FLAGS+=" -e \"$var\""
-            done
-            echo "env_flags=${FLAGS}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Deploy to VM
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_SSH_USER }}@${{ secrets.VM_SSH_HOST }} "
-            sudo docker pull docker.io/${{ secrets.API_IMAGE_NAME }}:latest &&
-            sudo docker stop ${{ secrets.API_CONTAINER_NAME }} || true &&
-            sudo docker rm ${{ secrets.API_CONTAINER_NAME }} || true &&
-            sudo docker run -d \
+          port: 22
+          script: |
+            if [ -n "${{ secrets.DOCKER_PASSWORD }}" ]; then
+              echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            fi
+            echo "--- Pulling latest Docker image ---"
+            docker pull ${{ secrets.API_IMAGE_NAME }}:latest
+            echo "--- Stopping existing container ---"
+            docker stop ${{ secrets.API_CONTAINER_NAME }} || true
+            echo "--- Removing existing container ---"
+            docker rm ${{ secrets.API_CONTAINER_NAME }} || true
+            echo "--- Starting new container ---"
+            docker run -d \
               --name ${{ secrets.API_CONTAINER_NAME }} \
               -p ${{ secrets.API_PORT }} \
-              ${{ steps.env_vars.outputs.env_flags }} \
-              docker.io/${{ secrets.API_IMAGE_NAME }}:latest
-          "
+              ${{ secrets.ENV_VARS }} \
+              ${{ secrets.API_IMAGE_NAME }}:latest
