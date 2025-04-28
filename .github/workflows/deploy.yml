@@ -19,7 +19,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "✅ Conectado ao servidor!"
-            cd /caminho/do/projeto
-            git pull origin main
-            npm install  # Se for Node.js
-            sudo systemctl restart minha-aplicacao  # Se usar systemd
+            ls 
