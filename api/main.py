@@ -18,6 +18,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+print("python")
+
 app.include_router(
     api_router,
     prefix="/api"
