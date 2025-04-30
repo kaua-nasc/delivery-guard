@@ -1,8 +1,11 @@
 name: Deploy to Server
 
 on:
-  push:
-    branches: ["develop"]  # Só dispara no push para a branch main
+  workflow_call:
+    inputs:
+      folder:
+        required: true
+        type: string
 
 jobs:
   deploy:
@@ -16,10 +19,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest ./api
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest ./${{ inputs.folder }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
         
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
@@ -29,7 +33,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "✅ Conectado ao servidor!"
-            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest
-            sudo docker stop minha-app || true
-            sudo docker rm minha-app || true
-            sudo docker run -d --name minha-app -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/delivery-guard-api:latest
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
+            sudo docker stop ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} || true
+            sudo docker rm ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} || true
+            sudo docker run --env-file /opt/d${{ secrets.IMAGE_NAME }}/${{ inputs.folder }} -d --name ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
