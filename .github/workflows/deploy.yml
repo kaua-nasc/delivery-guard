@@ -35,4 +35,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
             sudo docker stop ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} || true
             sudo docker rm ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} || true
-            sudo docker run --env-file /opt/d${{ secrets.IMAGE_NAME }}/${{ inputs.folder }}/.env -d --name ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
+            sudo docker run --env-file /opt/${{ secrets.IMAGE_NAME }}/${{ inputs.folder }}/.env -d --name ${{ secrets.IMAGE_NAME }}-${{ inputs.folder }} -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
