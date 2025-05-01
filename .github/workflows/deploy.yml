@@ -14,21 +14,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout code - ${{ inputs.folder }}
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
+      - name: Login to Docker Hub - ${{ inputs.folder }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image - ${{ inputs.folder }}
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest ./${{ inputs.folder }}
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.IMAGE_NAME }}-${{ inputs.folder }}:latest
         
-      - name: Deploy via SSH
+      - name: Deploy via SSH - ${{ inputs.folder }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}

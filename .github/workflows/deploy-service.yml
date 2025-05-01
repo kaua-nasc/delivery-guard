@@ -1,4 +1,4 @@
-name: Deploy Service to Server
+name: Deploy Service Project to Server
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - service/**
       - deploy.yml
       - deploy-service.yml
-    branches: 
-      - "develop"
+    branches:
       - "master"
 
 jobs:

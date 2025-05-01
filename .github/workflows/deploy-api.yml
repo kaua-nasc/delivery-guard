@@ -1,4 +1,4 @@
-name: Deploy API to Server
+name: Deploy API Project to Server
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - api/**
       - deploy.yml
       - deploy-api.yml
-    branches: 
-      - "develop"
+    branches:
       - "master"
 
 jobs:
