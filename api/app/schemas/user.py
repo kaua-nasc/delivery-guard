@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from datetime import datetime
 from typing import Optional
 from enum import Enum
@@ -34,6 +34,8 @@ class UserUpdate(BaseModel):
     role: Optional[UserRole] = None
 
 class UserResponse(UserBase):
+    model_config = ConfigDict(orm_mode = True)
+
     id: int
     full_name: Optional[str]
     role: UserRole
@@ -41,9 +43,6 @@ class UserResponse(UserBase):
     last_login: Optional[datetime]
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        orm_mode = True
 
 class UserStatusUpdate(BaseModel):
     is_active: bool
