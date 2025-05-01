@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 from datetime import datetime
 from typing import Optional, List
 from enum import Enum
@@ -65,7 +65,7 @@ class TransactionCreate(BaseModel):
     currency: str = Field("BRL", min_length=3, max_length=3)
 
     @field_validator('card_last_four')
-    def validate_card_last_four(cls, v: Optional[str], info: 'ValidationInfo'):
+    def validate_card_last_four(cls, v: Optional[str], info: ValidationInfo):
         data = info.data
         payment_method = data.get('payment_method')
         
@@ -76,6 +76,8 @@ class TransactionCreate(BaseModel):
 
 
 class TransactionResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     customer_id: str
     amount: float
@@ -84,9 +86,6 @@ class TransactionResponse(BaseModel):
     ml_score: Optional[float] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
 
 class TransactionUpdate(BaseModel):
     status: Optional[TransactionStatus]
