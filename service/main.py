@@ -2,14 +2,14 @@ import aio_pika
 import asyncio
 import json
 
-from app.config import RABBIT_URL
+from app.config import RABBIT_URL, RABBIT_QUEUE_ANALISE
 from app.consumer import process_transaction
 
 async def main():
     connection = await aio_pika.connect_robust(RABBIT_URL)
     channel = await connection.channel()
     
-    queue = await channel.declare_queue("transaction_analise", durable=True)
+    queue = await channel.declare_queue(RABBIT_QUEUE_ANALISE, durable=True)
 
     async def on_message(message: aio_pika.IncomingMessage):
         async with message.process():  # faz ack automático ao fim
