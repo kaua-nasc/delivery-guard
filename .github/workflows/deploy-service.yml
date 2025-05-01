@@ -1,11 +1,11 @@
-name: Deploy API to Server
+name: Deploy Service to Server
 
 on:
   push:
     paths: 
-      - api/**
+      - service/**
       - deploy.yml
-      - deploy-api.yml
+      - deploy-service.yml
     branches: 
       - "develop"
       - "master"
@@ -14,5 +14,6 @@ jobs:
   call-deploy:
     uses: ./.github/workflows/deploy.yml
     with:
-      folder: api
+      folder: worker
+      port: 3000:3000
     secrets: inherit
