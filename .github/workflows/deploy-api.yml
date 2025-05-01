@@ -14,3 +14,4 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       folder: api
+    secrets: inherit
