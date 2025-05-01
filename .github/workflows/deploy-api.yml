@@ -2,10 +2,6 @@ name: Deploy API to Server
 
 on:
   push:
-    paths: 
-      - api/**
-      - deploy.yml
-      - deploy-api.yml
     branches: 
       - "develop"
       - "master"
