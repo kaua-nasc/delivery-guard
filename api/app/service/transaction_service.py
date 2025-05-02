@@ -18,6 +18,9 @@ class TransactionService:
         
 
     async def process_transaction(self, transaction_data: TransactionCreate) -> TransactionResponse:
+        if (transaction_data.amount < 0):
+            raise ValueError("Transaction amount must be equal to or greater than 0.")
+
         existing = await self.transaction_repo.get_by_id(transaction_data.transaction_id)
         if existing:
             raise ValueError("Transaction ID already exists")

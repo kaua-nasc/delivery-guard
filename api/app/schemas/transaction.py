@@ -1,3 +1,4 @@
+import decimal
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 from datetime import datetime
 from typing import Optional, List
@@ -39,20 +40,20 @@ class TransactionItemCreate(BaseModel):
     product_id: str
     product_name: str
     quantity: int
-    unit_price: float
+    unit_price: decimal.Decimal
     category: str
 
 class TransactionItemResponse(BaseModel):
     product_id: str
     # product_name: str
     # quantity: int
-    # unit_price: float
+    # unit_price: decimal.Decimal
     # category: str
     
 
 class TransactionCreate(BaseModel):
     transaction_id: str = Field(..., min_length=1, max_length=50)
-    amount: float = Field(..., gt=0)
+    amount: decimal.Decimal = Field(..., ge=0)
     payment_method: PaymentMethod
     card_last_four: Optional[str] = Field(None, min_length=4, max_length=4)
     card_brand: Optional[str] = Field(None, max_length=20)
@@ -80,10 +81,10 @@ class TransactionResponse(BaseModel):
 
     id: str
     customer_id: str
-    amount: float
+    amount: decimal.Decimal
     status: Optional[str] = None
     ml_status: Optional[str] = None
-    ml_score: Optional[float] = None
+    ml_score: Optional[decimal.Decimal] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
