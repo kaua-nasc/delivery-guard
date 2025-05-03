@@ -24,14 +24,14 @@ router = APIRouter()
 async def create_user(
     user: UserCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+   # current_user: User = Depends(get_current_active_user)
 ):
     # Somente admin pode criar usuários
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only admin users can create new users"
-        )
+    # if current_user.role != "admin":
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="Only admin users can create new users"
+    #     )
 
     # Verifica se username ou email já existem
     existing_user = await db.execute(

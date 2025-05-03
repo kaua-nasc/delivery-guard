@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 
-from ...schemas.user import UserResponse
+from ...schemas.user import AuthLogin
 from ...models.user import User
 from ...database.session import get_db
 from ...core.security import (
@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.post("/token")
 async def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    form_data: AuthLogin,
     db: AsyncSession = Depends(get_db)
 ):
     user = await db.execute(select(User).filter(User.username == form_data.username))
@@ -44,5 +44,4 @@ async def login_for_access_token(
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": UserResponse.model_validate(user)
     }

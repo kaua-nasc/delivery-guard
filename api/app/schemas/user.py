@@ -12,6 +12,10 @@ class UserBase(BaseModel):
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
 
+class AuthLogin(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=8, max_length=100)
+
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=100)
     full_name: Optional[str] = Field(None, max_length=100)
@@ -36,13 +40,13 @@ class UserUpdate(BaseModel):
 class UserResponse(UserBase):
     model_config = ConfigDict(orm_mode = True)
 
-    id: int
+    id: str
     full_name: Optional[str]
     role: UserRole
     is_active: bool
     last_login: Optional[datetime]
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime]
 
 class UserStatusUpdate(BaseModel):
     is_active: bool
