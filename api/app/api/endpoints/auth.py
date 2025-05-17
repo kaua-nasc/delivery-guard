@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.post("/token")
 async def login_for_access_token(
-    form_data: AuthLogin,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db)
 ):
     user = await db.execute(select(User).filter(User.username == form_data.username))
