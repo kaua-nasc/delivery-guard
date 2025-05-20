@@ -1,19 +1,19 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, func
-from sqlalchemy.orm import relationship
+from __future__ import annotations
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from ..database.base import Base
-
+from ..models.base import Base
 
 class TransactionItem(Base):
     __tablename__ = "transaction_items"
 
-    id = Column(Integer, primary_key=True, index=True)
-    transaction_id = Column(String(36), ForeignKey("transactions.id"), nullable=False)
-    product_id = Column(String(50))
-    product_name = Column(String(100), nullable=False)
-    quantity = Column(Integer, nullable=False)
-    unit_price = Column(Numeric(15, 2), nullable=False)
-    category = Column(String(50))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    transaction_id: Mapped[str] = mapped_column(String(36), ForeignKey("transactions.id"), nullable=False)
+    product_id: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    product_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    unit_price: Mapped[float] = mapped_column(Numeric(15, 2), nullable=False)
+    category: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    transaction = relationship("Transaction", back_populates="items")
+transaction = relationship("api.app.models.transaction.Transaction", back_populates="transaction_items")

@@ -10,11 +10,11 @@ class CustomerService:
 
     async def create(self, customer_data: CustomerCreate) -> CustomerResponse:
         fields_to_check = {
-            "email": customer_data["email"],
-            "phone": customer_data["phone"],
-            "first_name": customer_data["first_name"],
-            "last_name": customer_data["last_name"],
-            "ip_address": customer_data["ip_address"],
+            "email": customer_data.email,
+            "phone": customer_data.phone,
+            "first_name": customer_data.first_name,
+            "last_name": customer_data.last_name,
+            "ip_address": customer_data.ip_address,
         }
 
         for field, value in fields_to_check.items():
@@ -22,6 +22,6 @@ class CustomerService:
                 raise ValueError(f"O campo {field} com valor {value} já está em uso")
 
 
-        db_customer = await self.customer_repo.create({**customer_data})
+        db_customer = await self.customer_repo.create({**customer_data.model_dump()})
 
         return CustomerResponse.model_validate(db_customer)

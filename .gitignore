@@ -42,3 +42,6 @@ htmlcov/
 # Docker
 *.pid
 docker-compose.override.yml
+
+# others
+bin

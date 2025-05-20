@@ -5,7 +5,7 @@ from ..core.config import rabbitmq_settings
 from fastapi import Request
 
 class RabbitMQProducer:
-    def __init__(self, request: Request = None):
+    def __init__(self, request: Request):
         self.request = request
     
     async def publish(self, routing_key: str, message: AnaliseMessage):

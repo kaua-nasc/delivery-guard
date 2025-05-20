@@ -1,8 +1,8 @@
+import decimal
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 from datetime import datetime
 from typing import Optional, List
 from enum import Enum
-
 from .customer import CustomerCreate
 
 class PaymentMethod(str, Enum):
@@ -25,34 +25,25 @@ class MLStatus(str, Enum):
     PENDING = "pending"
     ERROR = "error"
 
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional, List
-from enum import Enum
-
-class PaymentMethod(str, Enum):
-    credit_card = "credit_card"
-    debit_card = "debit_card"
-    pix = "pix"
-    boleto = "boleto"
 
 class TransactionItemCreate(BaseModel):
     product_id: str
     product_name: str
     quantity: int
-    unit_price: float
+    unit_price: decimal.Decimal
     category: str
 
 class TransactionItemResponse(BaseModel):
     product_id: str
     # product_name: str
     # quantity: int
-    # unit_price: float
+    # unit_price: decimal.Decimal
     # category: str
     
 
 class TransactionCreate(BaseModel):
     transaction_id: str = Field(..., min_length=1, max_length=50)
-    amount: float = Field(..., gt=0)
+    amount: decimal.Decimal = Field(..., ge=0)
     payment_method: PaymentMethod
     card_last_four: Optional[str] = Field(None, min_length=4, max_length=4)
     card_brand: Optional[str] = Field(None, max_length=20)
@@ -62,7 +53,7 @@ class TransactionCreate(BaseModel):
     device_id: Optional[str] = Field(None, max_length=100)
     customer: CustomerCreate
     items: List[TransactionItemCreate]
-    currency: str = Field("BRL", min_length=3, max_length=3)
+    currency: Optional[str] = Field(default="BRL", min_length=3, max_length=3)
 
     @field_validator('card_last_four')
     def validate_card_last_four(cls, v: Optional[str], info: ValidationInfo):
@@ -73,17 +64,15 @@ class TransactionCreate(BaseModel):
             raise ValueError('card_last_four is required for card payments')
         return v
 
-
-
 class TransactionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
     customer_id: str
-    amount: float
+    amount: decimal.Decimal
     status: Optional[str] = None
     ml_status: Optional[str] = None
-    ml_score: Optional[float] = None
+    ml_score: Optional[decimal.Decimal] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

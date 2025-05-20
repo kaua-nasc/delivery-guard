@@ -1,36 +1,36 @@
-from sqlalchemy import Column, String, ForeignKey, Numeric, Text, DateTime
+from __future__ import annotations
+from sqlalchemy import String, ForeignKey, Numeric, Text, DateTime
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from decimal import Decimal
 
 from ..models.base import Base
 
 class Transaction(Base):
     __tablename__ = "transactions"
 
-    id = Column(String(36), primary_key=True)
-    customer_id = Column(String(36), ForeignKey("customers.id"), nullable=False)
-    amount = Column(Numeric(15, 2), nullable=False)
-    currency = Column(String(3), default="BRL")
-    payment_method = Column(String(50), nullable=False)
-    card_last_four = Column(String(4))
-    card_brand = Column(String(20))
-    billing_address = Column(Text)
-    shipping_address = Column(Text)
-    ip_address = Column(String(50))
-    device_id = Column(String(100))
-    status = Column(String(20), default="pending")
-    ml_status = Column(String(20))
-    ml_score = Column(Numeric(5, 4))
-    ml_decision_time = Column(DateTime(timezone=True))
-    operator_id = Column(String(36), ForeignKey("users.id"))
-    operator_decision = Column(String(20))
-    operator_decision_time = Column(DateTime(timezone=True))
-    operator_notes = Column(Text)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    customer_id: Mapped[str] = mapped_column(String(36), ForeignKey("customers.id"), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), default="BRL")
+    payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
+    card_last_four: Mapped[str | None] = mapped_column(String(4), nullable=True)
+    card_brand: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    billing_address: Mapped[str | None] = mapped_column(Text, nullable=True)
+    shipping_address: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ip_address: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    device_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    ml_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    ml_score: Mapped[Decimal | None] = mapped_column(Numeric(5, 4), nullable=True)
+    ml_decision_time: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    operator_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("users.id"), nullable=True)
+    operator_decision: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    operator_decision_time: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    operator_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    items = relationship("TransactionItem", back_populates="transaction")
-    customer = relationship("Customer", back_populates="transactions")
-    operator = relationship("User", back_populates="transactions")
-
-
+transaction_items  = relationship("api.app.models.transaction_item.TransactionItem", back_populates="transaction")
+customer = relationship("Customer", back_populates="transactions")
+operator = relationship("User", back_populates="transactions")

@@ -1,13 +1,14 @@
 from datetime import datetime
+import decimal
 from typing import Optional
 from pydantic import BaseModel
 import random
 
 class MLResult(BaseModel):
     status: str
-    score: Optional[float]
+    score: Optional[decimal.Decimal]
     model_version: str
-    processing_time: float
+    processing_time: decimal.Decimal
 
 async def predict_fraud(transaction) -> MLResult:
     """Serviço fictício de predição de fraude"""
@@ -32,7 +33,7 @@ async def predict_fraud(transaction) -> MLResult:
     
     return MLResult(
         status=status,
-        score=risk_score,
+        score=decimal.Decimal(risk_score),
         model_version="1.0.0",
-        processing_time=processing_time
+        processing_time=decimal.Decimal(processing_time)
     )
