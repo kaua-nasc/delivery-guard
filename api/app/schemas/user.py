@@ -38,7 +38,7 @@ class UserUpdate(BaseModel):
     role: Optional[UserRole] = None
 
 class UserResponse(UserBase):
-    model_config = ConfigDict(orm_mode = True)
+    model_config = ConfigDict(from_attributes = True)
 
     id: str
     full_name: Optional[str]

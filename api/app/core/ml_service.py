@@ -33,7 +33,7 @@ async def predict_fraud(transaction) -> MLResult:
     
     return MLResult(
         status=status,
-        score=risk_score,
+        score=decimal.Decimal(risk_score),
         model_version="1.0.0",
-        processing_time=processing_time
+        processing_time=decimal.Decimal(processing_time)
     )

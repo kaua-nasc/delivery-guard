@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validat
 from datetime import datetime
 from typing import Optional, List
 from enum import Enum
-
 from .customer import CustomerCreate
 
 class PaymentMethod(str, Enum):
@@ -26,15 +25,6 @@ class MLStatus(str, Enum):
     PENDING = "pending"
     ERROR = "error"
 
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional, List
-from enum import Enum
-
-class PaymentMethod(str, Enum):
-    credit_card = "credit_card"
-    debit_card = "debit_card"
-    pix = "pix"
-    boleto = "boleto"
 
 class TransactionItemCreate(BaseModel):
     product_id: str
@@ -63,7 +53,7 @@ class TransactionCreate(BaseModel):
     device_id: Optional[str] = Field(None, max_length=100)
     customer: CustomerCreate
     items: List[TransactionItemCreate]
-    currency: str = Field("BRL", min_length=3, max_length=3)
+    currency: Optional[str] = Field(default="BRL", min_length=3, max_length=3)
 
     @field_validator('card_last_four')
     def validate_card_last_four(cls, v: Optional[str], info: ValidationInfo):
@@ -73,8 +63,6 @@ class TransactionCreate(BaseModel):
         if payment_method in ['credit_card', 'debit_card'] and not v:
             raise ValueError('card_last_four is required for card payments')
         return v
-
-
 
 class TransactionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

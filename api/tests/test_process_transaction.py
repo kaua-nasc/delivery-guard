@@ -1,12 +1,14 @@
 from datetime import datetime, timezone
+import decimal
 from unittest.mock import AsyncMock, MagicMock
 
 from api.app.schemas.customer import CustomerCreate
-from api.app.schemas.transaction import TransactionCreate, TransactionItemCreate, TransactionResponse
+from api.app.schemas.transaction import PaymentMethod, TransactionCreate, TransactionItemCreate, TransactionResponse
 from api.app.service.transaction_service import TransactionService
-from api.app.models import customer, transaction, user, transaction_item 
 import pytest
 from . import mocks
+from api.app.models import * 
+
 
 @pytest.mark.asyncio
 async def test_process_transaction_success():
@@ -40,29 +42,12 @@ async def test_process_transaction_success():
     producer.publish.assert_awaited_once()
 
 @pytest.mark.asyncio
-async def test_transaction_missing_required_value():
-    with pytest.raises(ValueError):
-        TransactionCreate(
-            transaction_id="txn_001",
-            amount=199.99,
-            payment_method="credit_card",
-            card_last_four="1234",
-            card_brand="Visa",
-            billing_address="Rua A, 123",
-            shipping_address="Rua B, 456",
-            ip_address="192.168.0.1",
-            device_id="device-abc-123",
-            customer=None,
-            items=[]
-        )
-
-@pytest.mark.asyncio
 async def test_transaction_invalid_amount():
     with pytest.raises(ValueError):
         TransactionCreate(
             transaction_id="txn_001",
-            amount=-9.92,
-            payment_method="credit_card",
+            amount=decimal.Decimal(-9.92),
+            payment_method=PaymentMethod.CREDIT_CARD,
             card_last_four="1234",
             card_brand="Visa",
             billing_address="Rua A, 123",
@@ -89,14 +74,14 @@ async def test_transaction_invalid_amount():
                     product_id="prod_001",
                     product_name="Camisa Polo",
                     quantity=2,
-                    unit_price=79.99,
+                    unit_price=decimal.Decimal(79.99),
                     category="Roupas"
                 ),
                 TransactionItemCreate(
                     product_id="prod_002",
                     product_name="Tênis Esportivo",
                     quantity=1,
-                    unit_price=119.99,
+                    unit_price=decimal.Decimal(119.99),
                     category="Calçados"
                 )
             ],

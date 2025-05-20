@@ -2,9 +2,6 @@ import logging
 import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-import json
-from datetime import datetime
-import os
 
 def setup_logging():
     """Configuração completa do sistema de logs"""

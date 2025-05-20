@@ -1,6 +1,7 @@
 import aio_pika
 import asyncio
 import json
+from aio_pika.abc import AbstractIncomingMessage
 
 from app.config import RABBIT_URL, RABBIT_QUEUE_ANALISE
 from app.consumer import process_transaction
@@ -11,8 +12,8 @@ async def main():
     
     queue = await channel.declare_queue(RABBIT_QUEUE_ANALISE, durable=True)
 
-    async def on_message(message: aio_pika.IncomingMessage):
-        async with message.process():  # faz ack automático ao fim
+    async def on_message(message: AbstractIncomingMessage):
+        async with message.process():
             try:
                 payload = json.loads(message.body.decode())
                 if not isinstance(payload, dict):

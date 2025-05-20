@@ -136,7 +136,6 @@ async def update_user(
             continue  # Somente admin pode mudar roles
         setattr(db_user, field, value)
 
-    db_user.updated_at = func.now()
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)

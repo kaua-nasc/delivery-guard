@@ -1,13 +1,14 @@
 from datetime import datetime, timezone
+import decimal
 from api.app.models.transaction import Transaction
 from api.app.schemas.customer import CustomerCreate
-from api.app.schemas.transaction import TransactionCreate, TransactionItemCreate, TransactionResponse
-
+from api.app.schemas.transaction import PaymentMethod, TransactionCreate, TransactionItemCreate, TransactionResponse
+from api.app.models import * 
 
 transaction_correct_input = TransactionCreate(
     transaction_id="txn_001",
-    amount=199.99,
-    payment_method="credit_card",
+    amount=decimal.Decimal(199.99),
+    payment_method=PaymentMethod.CREDIT_CARD,
     card_last_four="1234",
     card_brand="Visa",
     billing_address="Rua A, 123",
@@ -34,14 +35,14 @@ transaction_correct_input = TransactionCreate(
             product_id="prod_001",
             product_name="Camisa Polo",
             quantity=2,
-            unit_price=79.99,
+            unit_price=decimal.Decimal(79.99),
             category="Roupas"
         ),
         TransactionItemCreate(
             product_id="prod_002",
             product_name="Tênis Esportivo",
             quantity=1,
-            unit_price=119.99,
+            unit_price=decimal.Decimal(119.99),
             category="Calçados"
         )
     ],
@@ -79,6 +80,6 @@ transaction_response_correct_created = TransactionResponse(
     status="pending",
     ml_status=None,
     ml_score=None,
-    created_at=transaction_correct_created.created_at,
+    created_at=datetime.now(timezone.utc),
     updated_at=None,
 )

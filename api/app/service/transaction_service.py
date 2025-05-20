@@ -28,15 +28,12 @@ class TransactionService:
         customer = transaction_data.customer.model_dump()
         customer = await self.customer_service.get_by_id(customer["customer_id"])
         if customer is None:
-            customer = await self.customer_service.create({**transaction_data.customer.model_dump()})
+            customer = await self.customer_service.create(transaction_data.customer)
 
         transaction = transaction_data.model_dump(exclude={"customer"})
         transaction["customer_id"] = customer.id
 
-        db_transaction = await self.transaction_repo.create({
-            **transaction,
-            "status": "pending"
-        })
+        db_transaction = await self.transaction_repo.create(transaction_data=transaction_data)
 
         await self.producer.publish(
             routing_key="transaction.analise",
