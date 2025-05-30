@@ -1,4 +1,4 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker, AsyncEngine
 from dotenv import load_dotenv
 import os
 
@@ -13,17 +13,23 @@ def get_valid_env(env: str | None):
 
     return env
 
+def create_engine() -> AsyncEngine:
+    try:
+        return create_async_engine(
+            get_valid_env(DATABASE_URL),
+            echo=True,
+            pool_size=5,
+            max_overflow=10,
+            connect_args={
+                "ssl": "require"
+            }
+        )
+    except:
+        print("Database - Not possible to connect")
+        raise Exception 
 
-# Crie o engine assíncrono
-engine = create_async_engine(
-    get_valid_env(DATABASE_URL),
-    echo=True,
-    pool_size=5,
-    max_overflow=10,
-    connect_args={
-        "ssl": "require"
-    }
-)
+
+engine = create_engine()
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,

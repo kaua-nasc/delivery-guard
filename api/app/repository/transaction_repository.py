@@ -58,7 +58,7 @@ class TransactionRepository:
         await self.db.commit()
         await self.db.refresh(db_transaction)
         return db_transaction
-    
+
     async def update_status(self, transaction_id: str, status: str) -> Transaction:
         transaction = await self.get_by_id(transaction_id)
         if not transaction: 
